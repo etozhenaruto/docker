@@ -1,0 +1,30 @@
+version: '3.8'
+services:
+  postgres:
+    build:
+      context: services/postgres
+      dockerfile: Dockerfile.development
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_DB=restauth
+      - POSTGRES_PASSWORD=qqq
+    volumes:
+      - "db-data:/var/lib/postgresql/data"
+
+  app:
+    build:
+      context: services/app
+      dockerfile: Dockerfile.development
+    environment:
+      - PORT=8091
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres/restauth
+      - JS_URL=http://localhost
+    image: 'my-java-application'
+    ports:
+      - 8091:8091
+    depends_on:
+      - postgres
+volumes:
+  db-data:
